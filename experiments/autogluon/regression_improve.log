@@ -1,0 +1,39 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+불러온 predictor, quantile_levels = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 1021.85it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights:  22%|██▏       | 38/170 [00:00<00:00, 371.68it/s]Loading weights:  54%|█████▎    | 91/170 [00:00<00:00, 456.41it/s]Loading weights:  86%|████████▋ | 147/170 [00:00<00:00, 499.85it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 527.92it/s]
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2002.74it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1827.18it/s]
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2050.18it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1750.26it/s]
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2055.35it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1825.30it/s]
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2048.26it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1848.48it/s]
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2045.73it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1908.28it/s]
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2051.28it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1757.27it/s]
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2003.32it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1867.15it/s]
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2087.45it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1774.38it/s]
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2052.58it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1810.47it/s]
+채점행 n=164 (이전 실험과 동일해야 함: 164)
+[point_exp(이전 방식과 동일)] sMAPE=62.58%  베이스라인=60.46%  reg_term=-0.0210  loses to baseline
+[quantile_avg(스미어링 보정)] sMAPE=56.49%  베이스라인=60.46%  reg_term=0.0394  BEATS baseline
+[blend alpha=0.0] sMAPE=60.46%  reg_term=0.0000
+[blend alpha=0.1] sMAPE=59.24%  reg_term=0.0122
+[blend alpha=0.2] sMAPE=58.19%  reg_term=0.0225
+[blend alpha=0.3] sMAPE=57.38%  reg_term=0.0306
+[blend alpha=0.4] sMAPE=56.85%  reg_term=0.0358
+[blend alpha=0.5] sMAPE=56.46%  reg_term=0.0398
+[blend alpha=0.6] sMAPE=56.14%  reg_term=0.0429
+[blend alpha=0.7] sMAPE=56.00%  reg_term=0.0443
+[blend alpha=0.8] sMAPE=55.99%  reg_term=0.0444
+[blend alpha=0.9] sMAPE=56.18%  reg_term=0.0425
+[blend alpha=1.0] sMAPE=56.49%  reg_term=0.0394
+
+최적 블렌딩: alpha=0.80  sMAPE=55.99%  (BEATS baseline 60.46%)
+저장 위치: /home/geon1/github/kowas-epi-forecast/experiments/autogluon/improve_results

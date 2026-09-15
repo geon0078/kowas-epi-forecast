@@ -1,0 +1,5 @@
+n_scored=164
+model_smape=62.5757
+baseline_smape=60.4625
+baseline_smape_readme_official=60.46
+regression_term=-0.0210

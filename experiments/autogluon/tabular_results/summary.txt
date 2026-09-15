@@ -1,0 +1,4 @@
+n_train=2597
+n_test=160
+macro_f1=0.5254
+baseline_macro_f1_readme=0.5810

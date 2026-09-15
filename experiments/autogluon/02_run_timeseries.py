@@ -1,0 +1,201 @@
+"""
+AutoGluon TimeSeriesPredictor 실험.
+평가는 README의 2026-Q3 평가 창(target 2026-W27~W36, train_until=2026-W25)과
+'동일한 fold 경계'를 그대로 재사용해 evaluation.py의 smape()를 직접 import해서 채점한다
+(완전히 같은 채점 방식은 아니지만 — 같은 fold의 같은 채점행이므로 baseline sMAPE 60.46%와
+직접 비교 가능한 수치다).
+
+절대 원칙: target_conc_t2/target_alert_t2는 여기서 예측 대상 정답 비교에만 쓰고,
+모델 입력(covariate)에는 넣지 않는다. 각 origin 주차의 predict() 호출에는
+그 origin까지의 데이터만 넘긴다(미래 데이터 누수 금지).
+"""
+import sys, time
+from pathlib import Path
+import numpy as np
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "KOWAS-EPI"))
+from evaluation import smape  # noqa: E402  (원본 채점 함수 재사용 — 재구현하지 않음)
+
+from autogluon.timeseries import TimeSeriesDataFrame, TimeSeriesPredictor
+import torch
+torch.set_float32_matmul_precision("high")  # PyTorch 2.13 + lightning 신구 API 혼용 크래시(DeepAR 등) 방지
+
+HERE = Path(__file__).resolve().parent
+DATA = HERE / "data"
+OUTDIR = HERE / "ts_results"
+OUTDIR.mkdir(exist_ok=True)
+
+TRAIN_UNTIL = "2026-W25"          # 2026-Q3 fold의 train_until (README/folds.csv와 동일)
+FOLD_TARGETS = [f"2026-W{w:02d}" for w in range(27, 37)]  # 2026-W27~W36 (10주)
+
+
+def parse_week(w):
+    y, ww = w.split("-W")
+    return (int(y), int(ww))
+
+
+def week_num(w):
+    return int(w.split("-W")[1])
+
+
+def shift_week(w, k):
+    import datetime
+    y, ww = parse_week(w)
+    d = datetime.date.fromisocalendar(y, ww, 1) + datetime.timedelta(weeks=k)
+    iso = d.isocalendar()
+    return f"{iso[0]}-W{iso[1]:02d}"
+
+
+def calendar_covariates(week_labels):
+    """분기 더미 + sin/cos(주차) — 미래에도 결정론적으로 계산 가능한 값만."""
+    wn = np.array([week_num(w) for w in week_labels])
+    import datetime
+    quarters = []
+    for w in week_labels:
+        y, ww = parse_week(w)
+        d = datetime.date.fromisocalendar(y, ww, 1)
+        quarters.append((d.month - 1) // 3 + 1)
+    quarters = np.array(quarters)
+    df = pd.DataFrame({
+        "sin_w": np.sin(2 * np.pi * wn / 52),
+        "cos_w": np.cos(2 * np.pi * wn / 52),
+        "q1": (quarters == 1).astype(float),
+        "q2": (quarters == 2).astype(float),
+        "q3": (quarters == 3).astype(float),
+        "q4": (quarters == 4).astype(float),
+    })
+    return df
+
+
+features = pd.read_parquet(DATA / "features.parquet")
+labels = pd.read_parquet(DATA / "labels.parquet")
+assert not {"target_conc_t2", "target_alert_t2", "target_week_t2"} & set(features.columns)
+
+KNOWN_COLS = ["sin_w", "cos_w"]
+q_dummy = calendar_covariates(features["date_week"].tolist())
+features = pd.concat([features.reset_index(drop=True), q_dummy[["q1", "q2", "q3", "q4"]]], axis=1)
+KNOWN_COLS = ["sin_w", "cos_w", "q1", "q2", "q3", "q4"]
+
+PAST_COLS = [
+    "n_sites", "conc_3wk_avg", "conc_base_avg", "wow_change_rate",
+    "precip_mm", "temp_avg", "pop_served", "pop_sampled",
+    "n_plants_valid", "treatment_population_sum",
+]
+for c in PAST_COLS:
+    features[c] = features[c].fillna(0.0)
+
+TARGET = "conc_log10"  # log10(1+conc_mean) — 극단적 스케일 차이(README 5-2) 때문에 로그스케일을 1차로 사용
+features[TARGET] = features.groupby("region")[TARGET].ffill().fillna(0.0)  # AutoGluon은 target 결측을 허용하지 않음 → ffill로 메움(과거 정보만 사용)
+
+ts_cols = ["region", "week_start_date", TARGET] + KNOWN_COLS + PAST_COLS
+ts_long = features[ts_cols].rename(columns={"region": "item_id", "week_start_date": "timestamp"})
+
+full_tsdf = TimeSeriesDataFrame.from_data_frame(ts_long, id_column="item_id", timestamp_column="timestamp")
+full_tsdf = full_tsdf.convert_frequency("W-SUN")
+full_tsdf = full_tsdf.fill_missing_values(method="ffill")
+
+train_cutoff = features.loc[features["date_week"] == TRAIN_UNTIL, "week_start_date"].iloc[0]
+train_tsdf, _ = full_tsdf.split_by_time(train_cutoff + pd.Timedelta(days=1))
+
+print(f"학습 데이터: {train_tsdf.num_items}개 시계열, 기간 ~{TRAIN_UNTIL}")
+
+predictor = TimeSeriesPredictor(
+    prediction_length=2,
+    target=TARGET,
+    known_covariates_names=KNOWN_COLS,
+    eval_metric="WQL",
+    freq="W-SUN",
+    path=str(HERE / "AutogluonModels" / "ts"),
+    verbosity=2,
+)
+
+t0 = time.time()
+predictor.fit(
+    train_tsdf,
+    presets="best_quality",
+    hyperparameters="default",
+    time_limit=1800,
+    num_val_windows=3,
+)
+fit_seconds = time.time() - t0
+print(f"TimeSeriesPredictor.fit 소요시간: {fit_seconds:.1f}초")
+
+lb = predictor.leaderboard(train_tsdf, extra_metrics=["MASE", "MAPE", "RMSE"])
+lb.to_csv(OUTDIR / "ts_leaderboard.csv", index=False)
+print(lb.to_string())
+
+# ---- GPU 사용 여부 확인 ----
+import torch
+gpu_used = torch.cuda.is_available()
+print("CUDA available:", gpu_used, "| device:", torch.cuda.get_device_name(0) if gpu_used else "N/A")
+
+# ---- 2026-Q3 fold 워크포워드 재현: origin을 W25~W34로 옮기며 h=2(=target) 예측 ----
+rows_out = []
+for target_week in FOLD_TARGETS:
+    origin = shift_week(target_week, -2)
+    origin_date = features.loc[features["date_week"] == origin, "week_start_date"]
+    if origin_date.empty:
+        continue
+    origin_date = origin_date.iloc[0]
+
+    hist, _ = full_tsdf.split_by_time(origin_date + pd.Timedelta(days=1))
+
+    future_weeks = [shift_week(origin, 1), shift_week(origin, 2)]
+    future_dates = features.loc[features["date_week"].isin(future_weeks), ["region", "date_week", "week_start_date"]]
+    fc = calendar_covariates(future_weeks)
+    fc["timestamp"] = [features.loc[features["date_week"] == w, "week_start_date"].iloc[0] for w in future_weeks]
+    known_rows = []
+    for region in hist.item_ids:
+        tmp = fc.copy()
+        tmp["item_id"] = region
+        known_rows.append(tmp)
+    known_future = pd.concat(known_rows, ignore_index=True)
+    known_tsdf = TimeSeriesDataFrame.from_data_frame(
+        known_future[["item_id", "timestamp"] + KNOWN_COLS], id_column="item_id", timestamp_column="timestamp"
+    )
+
+    pred = predictor.predict(hist, known_covariates=known_tsdf)
+    # h=2 (두 번째 미래 시점) = target_week
+    for region in pred.item_ids:
+        sub = pred.loc[region]
+        if len(sub) < 2:
+            continue
+        pred_log = sub.iloc[1]["mean"]
+        pred_conc = max(0.0, 10 ** pred_log - 1)
+        rows_out.append({"region": region, "date_week": target_week, "pred_conc_log_model": pred_log, "pred_conc": pred_conc})
+
+pred_df = pd.DataFrame(rows_out)
+pred_df.to_csv(OUTDIR / "fold_2026Q3_predictions.csv", index=False)
+
+# ---- README/evaluation.py와 동일 정의로 sMAPE 채점 ----
+panel_num_cols = ["conc_mean", "conc_3wk_avg"]
+merged = pred_df.merge(labels[["region", "date_week", "target_conc_t2"]], on=["region", "date_week"], how="left")
+
+# origin 기준 conc_3wk_avg (베이스라인) 매칭: target_week -> origin -> 그 주의 conc_3wk_avg
+origin_map = {tw: shift_week(tw, -2) for tw in FOLD_TARGETS}
+base_lookup = features.set_index(["region", "date_week"])["conc_3wk_avg"]
+merged["origin_week"] = merged["date_week"].map(origin_map)
+merged["baseline_conc"] = merged.apply(lambda r: base_lookup.get((r["region"], r["origin_week"]), np.nan), axis=1)
+
+scored = merged.dropna(subset=["target_conc_t2", "baseline_conc"])
+model_pairs = list(zip(scored["pred_conc"], scored["target_conc_t2"]))
+base_pairs = list(zip(scored["baseline_conc"], scored["target_conc_t2"]))
+
+model_smape = smape(model_pairs)
+base_smape = smape(base_pairs)
+print(f"\n[2026-Q3 fold 재현] 채점행 n={len(scored)}")
+print(f"AutoGluon TS 모델 sMAPE = {model_smape:.2f}%")
+print(f"베이스라인(conc_3wk_avg) sMAPE = {base_smape:.2f}%  (README 표: 60.46%)")
+print(f"회귀 항 점수(0.6*(1-smape/base)) = {0.6 * (1 - model_smape / base_smape):.4f}")
+
+with open(OUTDIR / "summary.txt", "w") as f:
+    f.write(f"fit_seconds={fit_seconds:.1f}\n")
+    f.write(f"gpu_used={gpu_used}\n")
+    f.write(f"n_scored={len(scored)}\n")
+    f.write(f"model_smape={model_smape:.4f}\n")
+    f.write(f"baseline_smape={base_smape:.4f}\n")
+    f.write(f"regression_term={0.6 * (1 - model_smape / base_smape):.4f}\n")
+
+print("\n저장 위치:", OUTDIR)

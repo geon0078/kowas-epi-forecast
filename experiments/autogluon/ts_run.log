@@ -1,0 +1,166 @@
+Beginning AutoGluon training... Time limit = 1800s
+AutoGluon will save models to '/home/geon1/github/kowas-epi-forecast/experiments/autogluon/AutogluonModels/ts'
+=================== System Info ===================
+AutoGluon Version:  1.6.2
+Python Version:     3.11.16
+Operating System:   Linux
+Platform Machine:   x86_64
+Platform Version:   #1 SMP PREEMPT_DYNAMIC Thu Jun 18 21:54:43 UTC 2026
+CPU Count:          32
+Pytorch Version:    2.13.0+cu130
+CUDA Version:       13.0
+GPU Memory:         GPU 0: 11.94/11.94 GB
+Total GPU Memory:   Free: 11.94 GB, Allocated: 0.00 GB, Total: 11.94 GB
+GPU Count:          1
+Memory Avail:       41.16 GB / 45.89 GB (89.7%)
+Disk Space Avail:   931.24 GB / 1006.85 GB (92.5%)
+===================================================
+Setting presets to: best_quality
+
+Fitting with arguments:
+{'enable_ensemble': True,
+ 'eval_metric': WQL,
+ 'freq': 'W-SUN',
+ 'hyperparameters': 'default',
+ 'known_covariates_names': ['sin_w', 'cos_w', 'q1', 'q2', 'q3', 'q4'],
+ 'num_val_windows': 3,
+ 'prediction_length': 2,
+ 'quantile_levels': [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+ 'random_seed': 123,
+ 'refit_every_n_windows': 'auto',
+ 'refit_full': False,
+ 'skip_model_selection': False,
+ 'target': 'conc_log10',
+ 'time_limit': 1800,
+ 'verbosity': 2}
+
+Provided train_data has 2856 rows, 17 time series. Median time series length is 168 (min=168, max=168). 
+Automatically setting refit_every_n_windows=2 based on num_val_windows
+
+Provided data contains following columns:
+	target: 'conc_log10'
+	known_covariates:
+		categorical:        []
+		continuous (float): ['sin_w', 'cos_w', 'q1', 'q2', 'q3', 'q4']
+	past_covariates:
+		categorical:        []
+		continuous (float): ['n_sites', 'conc_3wk_avg', 'conc_base_avg', 'wow_change_rate', 'precip_mm', 'temp_avg', ...]
+
+To learn how to fix incorrectly inferred types, please see documentation for TimeSeriesPredictor.fit
+
+AutoGluon will gauge predictive performance using evaluation metric: 'WQL'
+	This metric's sign has been flipped to adhere to being higher_is_better. The metric score can be multiplied by -1 to get the metric value.
+===================================================
+
+Starting training. Start time is 2026-09-15 17:18:24
+Models that will be trained: ['SeasonalNaive', 'RecursiveTabular', 'DirectTabular', 'DynamicOptimizedTheta', 'Chronos2', 'Chronos2SmallFineTuned', 'AutoETS', 'Toto2', 'TemporalFusionTransformer', 'DeepAR']
+Training timeseries model SeasonalNaive. Training for up to 163.6s of the 1799.7s of remaining time.
+학습 데이터: 17개 시계열, 기간 ~2026-W25
+	-0.0835       = Validation score (-WQL)
+	1.44    s     = Training runtime
+	0.03    s     = Validation (prediction) runtime
+Training timeseries model RecursiveTabular. Training for up to 179.8s of the 1798.3s of remaining time.
+	-0.0831       = Validation score (-WQL)
+	1.22    s     = Training runtime
+	0.02    s     = Validation (prediction) runtime
+Training timeseries model DirectTabular. Training for up to 199.7s of the 1797.0s of remaining time.
+	-0.0953       = Validation score (-WQL)
+	19.02   s     = Training runtime
+	0.03    s     = Validation (prediction) runtime
+Training timeseries model DynamicOptimizedTheta. Training for up to 222.2s of the 1777.8s of remaining time.
+	-0.0770       = Validation score (-WQL)
+	0.58    s     = Training runtime
+	0.01    s     = Validation (prediction) runtime
+Training timeseries model Chronos2. Training for up to 253.9s of the 1777.2s of remaining time.
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights:  76%|███████▌  | 129/170 [00:00<00:00, 1265.15it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1362.35it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1780.11it/s]
+	-0.0719       = Validation score (-WQL)
+	5.41    s     = Training runtime
+	0.07    s     = Validation (prediction) runtime
+Training timeseries model Chronos2SmallFineTuned. Training for up to 295.3s of the 1771.7s of remaining time.
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2274.03it/s]
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 1910.45it/s]
+	-0.0720       = Validation score (-WQL)
+	80.58   s     = Training runtime
+	0.04    s     = Validation (prediction) runtime
+Training timeseries model AutoETS. Training for up to 338.2s of the 1691.1s of remaining time.
+	-0.0764       = Validation score (-WQL)
+	0.04    s     = Training runtime
+	0.01    s     = Validation (prediction) runtime
+Training timeseries model Toto2. Training for up to 422.8s of the 1691.0s of remaining time.
+	-0.0713       = Validation score (-WQL)
+	1.44    s     = Training runtime
+	0.01    s     = Validation (prediction) runtime
+Training timeseries model TemporalFusionTransformer. Training for up to 563.2s of the 1689.6s of remaining time.
+	-0.0922       = Validation score (-WQL)
+	94.77   s     = Training runtime
+	0.02    s     = Validation (prediction) runtime
+Training timeseries model DeepAR. Training for up to 994.8s of the 1594.8s of remaining time.
+	-0.0908       = Validation score (-WQL)
+	60.08   s     = Training runtime
+	0.02    s     = Validation (prediction) runtime
+Fitting 1 ensemble(s), in 1 layers.
+Training ensemble model WeightedEnsemble. Training for up to 1534.5s.
+	Ensemble weights: {'Chronos2': 0.05, 'Chronos2SmallFineTuned': 0.22, 'DeepAR': 0.01, 'SeasonalNaive': 0.02, 'TemporalFusionTransformer': 0.11, 'Toto2': 0.59}
+	-0.0707       = Validation score (-WQL)
+	0.76    s     = Training runtime
+	0.19    s     = Validation (prediction) runtime
+Training complete. Models trained: ['SeasonalNaive', 'RecursiveTabular', 'DirectTabular', 'DynamicOptimizedTheta', 'Chronos2', 'Chronos2SmallFineTuned', 'AutoETS', 'Toto2', 'TemporalFusionTransformer', 'DeepAR', 'WeightedEnsemble']
+Total runtime: 266.26 s
+Best model: WeightedEnsemble
+Best model score: -0.0707
+Additional data provided, testing on additional data. Resulting leaderboard will be sorted according to test score (`score_test`).
+TimeSeriesPredictor.fit 소요시간: 266.4초
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 1871.29it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights:  84%|████████▍ | 143/170 [00:00<00:00, 1423.35it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1472.24it/s]
+Model not specified in predict, will default to the model with the best validation score: WeightedEnsemble
+                        model  score_test  score_val  pred_time_test  pred_time_val  fit_time_marginal  fit_order      MASE      MAPE      RMSE
+0                       Toto2   -0.054006  -0.071339        0.595950       0.014413           1.443291          8 -0.637351 -0.073269 -0.254453
+1            WeightedEnsemble   -0.056137  -0.070708        3.103431       0.193913           0.762454         11 -0.676523 -0.078284 -0.267528
+2      Chronos2SmallFineTuned   -0.057703  -0.071996        1.148229       0.041728          80.578763          6 -0.704264 -0.080087 -0.276612
+3                    Chronos2   -0.058543  -0.071945        1.262174       0.072459           5.409282          5 -0.723783 -0.083133 -0.281338
+4                     AutoETS   -0.064235  -0.076380        2.641288       0.014034           0.043328          7 -0.698055 -0.083685 -0.287668
+5       DynamicOptimizedTheta   -0.066890  -0.076969        0.015420       0.013698           0.582375          4 -0.700594 -0.083866 -0.289445
+6            RecursiveTabular   -0.071161  -0.083063        0.040121       0.023125           1.215206          2 -0.863564 -0.096516 -0.348223
+7               SeasonalNaive   -0.078903  -0.083506        0.014592       0.029258           1.440023          1 -0.859737 -0.096360 -0.348245
+8               DirectTabular   -0.079988  -0.095266        0.153660       0.027826          19.021284          3 -0.998730 -0.123944 -0.399625
+9   TemporalFusionTransformer   -0.083083  -0.092221        0.047053       0.017586          94.774266          9 -1.008467 -0.118239 -0.372754
+10                     DeepAR   -0.089850  -0.090829        0.034315       0.017550          60.077020         10 -1.077583 -0.126450 -0.410022
+CUDA available: True | device: NVIDIA GeForce RTX 5070
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2052.85it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1866.67it/s]
+Model not specified in predict, will default to the model with the best validation score: WeightedEnsemble
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 1975.97it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights:  96%|█████████▌| 163/170 [00:00<00:00, 1628.10it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1640.08it/s]
+Model not specified in predict, will default to the model with the best validation score: WeightedEnsemble
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2053.18it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1803.07it/s]
+Model not specified in predict, will default to the model with the best validation score: WeightedEnsemble
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2009.39it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1743.87it/s]
+Model not specified in predict, will default to the model with the best validation score: WeightedEnsemble
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2043.83it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1704.52it/s]
+Model not specified in predict, will default to the model with the best validation score: WeightedEnsemble
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 1912.34it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1818.93it/s]
+Model not specified in predict, will default to the model with the best validation score: WeightedEnsemble
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2025.84it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1865.50it/s]
+Model not specified in predict, will default to the model with the best validation score: WeightedEnsemble
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 2142.54it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights:  94%|█████████▍| 160/170 [00:00<00:00, 1575.51it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1614.29it/s]
+Model not specified in predict, will default to the model with the best validation score: WeightedEnsemble
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 1926.35it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1748.37it/s]
+Model not specified in predict, will default to the model with the best validation score: WeightedEnsemble
+Loading weights:   0%|          | 0/92 [00:00<?, ?it/s]Loading weights: 100%|██████████| 92/92 [00:00<00:00, 1995.23it/s]
+Loading weights:   0%|          | 0/170 [00:00<?, ?it/s]Loading weights: 100%|██████████| 170/170 [00:00<00:00, 1842.84it/s]
+
+[2026-Q3 fold 재현] 채점행 n=136
+AutoGluon TS 모델 sMAPE = 88.56%
+베이스라인(conc_3wk_avg) sMAPE = 89.64%  (README 표: 60.46%)
+회귀 항 점수(0.6*(1-smape/base)) = 0.0072
+
+저장 위치: /home/geon1/github/kowas-epi-forecast/experiments/autogluon/ts_results

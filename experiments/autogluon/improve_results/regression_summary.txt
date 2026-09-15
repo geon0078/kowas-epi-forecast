@@ -1,0 +1,8 @@
+n_scored=164
+baseline_smape=60.4625
+point_exp(이전 방식과 동일)_smape=62.5780
+quantile_avg(스미어링 보정)_smape=56.4914
+best_blend_alpha=0.80
+best_blend_smape=55.9924
+best_blend_reg_term=0.0444
+prev_experiment_model_smape=62.58 (참고: 이전 02_run_timeseries.py 결과)

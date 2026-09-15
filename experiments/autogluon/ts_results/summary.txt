@@ -1,0 +1,6 @@
+fit_seconds=266.4
+gpu_used=True
+n_scored=136
+model_smape=88.5646
+baseline_smape=89.6399
+regression_term=0.0072

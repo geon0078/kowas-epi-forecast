@@ -1,0 +1,7 @@
+n_test=160
+baseline_macro_f1_readme=0.5810
+autogluon_default_model=WeightedEnsemble_L3
+autogluon_default_real_fold_f1=0.5254
+best_model_by_real_fold=NeuralNetTorch_r143_BAG_L1
+best_model_real_fold_f1=0.6599
+prev_experiment_default_f1=0.5254 (참고: 이전 03_run_tabular.py 결과)
