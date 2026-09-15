@@ -1,0 +1,5 @@
+ref_id,dataset_name_ko,dataset_name_en,provider,doi_or_id,license,format,contents,join_role
+DATAON-01,한반도 기상 관측 데이터 세트,Korean Observed Weather Dataset,한국과학기술정보연구원,(DOI 미부여) svcId=c1f03ab868f32371ec97a650bcdf39ac,-,zip,종관기상관측(ASOS) 관측 데이터,precip_mm·temp_avg 원자료 대체 및 시간 해상도 확장
+DATAON-02,전국 하천망 및 유역 환경 데이터셋,Stream Network and Catchment Environmental Dataset of South Korea,"국가연구데이터플랫폼(김석현, 강원대)",10.22711/idr/1112,CC-BY-NC,xlsx + gpkg,"하천망 분절·집수지역, WAMIS 대·중·소권역 ID, 고도·경사·토지피복, 19개 생물기후변수",plant_meta.csv 위경도를 집수지역에 공간조인 → 유역 단위 강수·토지이용 결합
+DATAON-03,KRIMATE-1min-HG v1.0,Korea Regional Climate at 1 arcmin resolution,한국과학기술원(구은한),10.22711/idr/1503,CC-BY-4.0,"NetCDF (1,449파일)","1 arcmin 격자 기상강제력, 강수 시간별/기온·습도·복사 3시간별",지점관측(ASOS) 대신 유역 격자 강수로 희석보정 정밀화
+DATAON-04,RAIN-F,Radar-AWS-IMERG Network Fusion dataset,국가연구데이터플랫폼,10.22711/0101ND019861063911.0,CC-BY,gz (5파일),"레이더·지상관측·IMERG 위성 융합 강수 데이터, 2017-2019 시간단위 26,280건",이종 관측 융합 방법론 참조 및 강수 결측 보간

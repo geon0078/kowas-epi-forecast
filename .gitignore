@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Claude Code local tooling (skill library cache, not project content)
+.agents/
+.claude/
+skills-lock.json
